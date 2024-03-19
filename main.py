@@ -88,5 +88,9 @@ def home_page():
 def login():
     return render_template("index.html")
 
+@app.route("/flights")
+def search_flights():
+    return render_template("flights.html")
+
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
