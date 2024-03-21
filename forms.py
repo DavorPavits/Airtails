@@ -19,7 +19,9 @@ class CreatePostForm(FlaskForm):
 
 #TODO: Create a form to login existing users
 class LoginForm(FlaskForm):
-    pass
+    email = StringField("Email", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired()])
+    submit = SubmitField("Let me")
 
 
 #TODO: Create a form to add comments

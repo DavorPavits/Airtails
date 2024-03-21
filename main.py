@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
 from sqlalchemy import Integer, String, Text
-from forms import CreatePostForm, RegisterForm, CommentForm
+from forms import CreatePostForm, RegisterForm, CommentForm, LoginForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_ckeditor import CKEditor
 from flask_bootstrap import Bootstrap5
@@ -84,9 +84,21 @@ def home_page():
 
 
 #TODO: Figure the login method
-@app.route("/home")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    return render_template("index.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        password = form.password.data
+        result = db.session.execute(db.select(User).where(User.email == form.email.data))
+        user = result.scalar()
+        if not user or not check_password_hash(user.password, password):
+            flash("That email does not exists or the password is wrong, please try again.")
+            return redirect(url_for("login"))
+        else:
+            login_user(user)
+            return redirect(url_for("home_page"))
+
+    return render_template("login.html", form = form, current_user = current_user)
 
 @app.route("/about")
 def about():
@@ -96,6 +108,8 @@ def about():
 @app.route("/flights")
 def search_flights():
     return render_template("flights.html")
+
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
