@@ -84,7 +84,7 @@ def home_page():
 
 
 #TODO: Figure the login method
-@app.route("/login")
+@app.route("/home")
 def login():
     return render_template("index.html")
 
